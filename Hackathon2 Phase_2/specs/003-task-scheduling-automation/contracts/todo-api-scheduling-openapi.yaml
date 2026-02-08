@@ -1,0 +1,397 @@
+openapi: 3.0.3
+info:
+  title: Todo API with Scheduling & Automation
+  description: Enhanced API for managing todo tasks with scheduling and automation features
+  version: 1.2.0
+servers:
+  - url: http://localhost:8000
+    description: Development server
+paths:
+  /api/tasks:
+    get:
+      summary: Get all tasks with optional filtering, searching, and sorting
+      parameters:
+        - name: search
+          in: query
+          description: Search term to filter tasks by title or description
+          required: false
+          schema:
+            type: string
+        - name: priority
+          in: query
+          description: Filter tasks by priority (low, medium, high)
+          required: false
+          schema:
+            type: string
+            enum: [low, medium, high]
+        - name: completed
+          in: query
+          description: Filter tasks by completion status
+          required: false
+          schema:
+            type: boolean
+        - name: tag
+          in: query
+          description: Filter tasks by tag name
+          required: false
+          schema:
+            type: string
+        - name: due_status
+          in: query
+          description: Filter tasks by due status (overdue, due_today, upcoming)
+          required: false
+          schema:
+            type: string
+            enum: [overdue, due_today, upcoming]
+        - name: sort
+          in: query
+          description: Sort tasks by field (created_at, priority, due_date)
+          required: false
+          schema:
+            type: string
+            default: created_at
+        - name: order
+          in: query
+          description: Sort order (asc, desc)
+          required: false
+          schema:
+            type: string
+            default: desc
+      responses:
+        '200':
+          description: List of tasks matching the criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Create a new task with scheduling and automation features
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+      responses:
+        '201':
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/tasks/{id}:
+    get:
+      summary: Get a task by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Task details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      summary: Update a task with scheduling and automation features
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdate'
+      responses:
+        '200':
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Delete a task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Task deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/tasks/{id}/toggle-complete:
+    patch:
+      summary: Toggle task completion status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Task completion status toggled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/scheduled-reminders:
+    get:
+      summary: Get all scheduled reminders
+      responses:
+        '200':
+          description: List of scheduled reminders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScheduledReminder'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/scheduled-reminders/{id}:
+    get:
+      summary: Get a specific scheduled reminder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Scheduled reminder details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledReminder'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Cancel a scheduled reminder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Scheduled reminder cancelled
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  schemas:
+    Task:
+      allOf:
+        - $ref: '#/components/schemas/TaskBase'
+        - type: object
+          required:
+            - id
+            - created_at
+            - updated_at
+          properties:
+            id:
+              type: integer
+              format: int64
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+            due_date:
+              type: string
+              format: date-time
+              nullable: true
+              description: Due date and time for the task
+            recurrence_pattern:
+              type: string
+              enum: [none, daily, weekly, monthly]
+              description: How often the task recurs
+              default: none
+            reminder_time:
+              type: integer
+              nullable: true
+              description: Minutes before due date to trigger reminder
+            last_occurrence_id:
+              type: integer
+              nullable: true
+              description: ID of the last occurrence in a recurring series
+            tags:
+              type: array
+              items:
+                type: string
+              description: List of tag names associated with the task
+            visual_status:
+              type: string
+              enum: [overdue, due_today, upcoming, completed]
+              description: Visual indicator for the task based on due date
+    TaskBase:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 1000
+          nullable: true
+        completed:
+          type: boolean
+          default: false
+        priority:
+          type: string
+          enum: [low, medium, high]
+          default: medium
+    TaskCreate:
+      allOf:
+        - $ref: '#/components/schemas/TaskBase'
+        - type: object
+          properties:
+            due_date:
+              type: string
+              format: date-time
+              nullable: true
+              description: Due date and time for the task
+            recurrence_pattern:
+              type: string
+              enum: [none, daily, weekly, monthly]
+              description: How often the task recurs
+              default: none
+            reminder_time:
+              type: integer
+              nullable: true
+              description: Minutes before due date to trigger reminder
+            tag_names:
+              type: array
+              items:
+                type: string
+              description: List of tag names to associate with the task
+              default: []
+    TaskUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 1000
+        completed:
+          type: boolean
+        priority:
+          type: string
+          enum: [low, medium, high]
+        due_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Due date and time for the task
+        recurrence_pattern:
+          type: string
+          enum: [none, daily, weekly, monthly]
+          description: How often the task recurs
+        reminder_time:
+          type: integer
+          nullable: true
+          description: Minutes before due date to trigger reminder
+        tag_names:
+          type: array
+          items:
+            type: string
+          description: List of tag names to associate with the task
+    ScheduledReminder:
+      type: object
+      required:
+        - id
+        - task_id
+        - scheduled_time
+        - triggered
+      properties:
+        id:
+          type: integer
+          format: int64
+        task_id:
+          type: integer
+          description: ID of the task this reminder is for
+        scheduled_time:
+          type: string
+          format: date-time
+          description: When the reminder is scheduled to trigger
+        triggered:
+          type: boolean
+          description: Whether the reminder has been triggered
+        triggered_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: When the reminder was actually triggered
+  responses:
+    BadRequest:
+      description: Bad request - validation error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string

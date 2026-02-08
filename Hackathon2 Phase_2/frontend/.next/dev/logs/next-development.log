@@ -1,0 +1,26 @@
+[00:00:03.779] Server  LOG     ✓ Ready in 2.5s
+[00:01:48.076] Server  LOG     ✓ Compiled in 2.9s
+[00:04:56.776] Server  LOG     ✓ Compiled in 166ms
+[00:06:47.395] Server  LOG     ✓ Compiled in 969ms
+[00:06:48.368] Server  LOG     ✓ Compiled in 459ms
+[00:06:48.524] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./src/pages/dashboard.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:06:48.527] Browser LOG     Refreshing page data due to server-side change
+[00:06:49.867] Browser LOG     Refreshing page data due to server-side change
+[00:06:50.076] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./src/pages/dashboard.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:06:50.168] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./src/pages/dashboard.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:08:06.381] Server  LOG     ✓ Compiled in 206ms
+[00:08:06.402] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./src/pages/dashboard.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:08:07.640] Server  ERROR   ⨯ Error: The default export is not a React Component in page: "/dashboard"
+[00:08:07.944] Server  ERROR   ⨯ Error: The default export is not a React Component in page: "/dashboard"
+[00:08:08.058] Server  LOG     ✓ Compiled in 0ms
+[00:08:09.303] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./src/pages/dashboard.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:09:07.946] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./src/pages/dashboard.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:09:07.948] Server  LOG     ✓ Compiled in 230ms
+[00:09:08.681] Server  ERROR   ⨯ Error: The default export is not a React Component in page: "/dashboard"
+[00:09:08.900] Server  ERROR   ⨯ Error: The default export is not a React Component in page: "/dashboard"
+[00:09:09.032] Server  LOG     ✓ Compiled in 418ms
+[00:09:09.271] Browser ERROR   uncaughtError: Error: The default export is not a React Component in page: "/dashboard"
+[00:13:39.007] Server  LOG     ✓ Compiled in 233ms
+[00:13:39.083] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:13:59.049] Server  LOG     ✓ Compiled in 224ms
+[00:15:25.555] Server  LOG     ✓ Compiled in 132ms
